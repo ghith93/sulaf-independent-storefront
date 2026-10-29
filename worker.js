@@ -76,8 +76,12 @@ async function callProvider(name, env, messages) {
       content = data.message?.content?.map(p => p.text || "").join("") || data.text || "";
     } else if (name === "Cloudflare Workers AI") {
       if (!env.AI) throw new Error("not_configured");
-      const prompt = messages.map(m => (m.role === "assistant" ? "Assistant: " : "User: ") + m.content).join("\n\n");
-      const result = await env.AI.run("@cf/meta/llama-3.1-8b-instruct", { prompt, max_tokens: 700 });
+      // The non-fast Llama 3.1 model was deprecated by Cloudflare on 2026-05-30.
+      // Use the maintained fast variant and its native chat-message input format.
+      const result = await env.AI.run("@cf/meta/llama-3.1-8b-instruct-fast", {
+        messages,
+        max_tokens: 700
+      });
       content = result.response || "";
     }
     if (!content.trim()) throw new Error("empty_response");
