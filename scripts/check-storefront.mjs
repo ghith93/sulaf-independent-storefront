@@ -15,7 +15,14 @@ assert.match(html, /application\/ld\+json/, "Structured product data is required
 assert.match(html, /href="favicon\.svg"/, "Favicon must be linked");
 assert.match(html, /سيروم رواء/, "Product copy is required");
 assert.match(html, /50\s*مل/, "Product size must be visible in Arabic");
-assert.match(html, /\$12/, "Approved price must be visible");
+assert.match(html, /\$19\.90/, "30 ml price must be visible");
+assert.match(html, /\$21\.90/, "50 ml hero price must be visible");
+assert.match(html, /\$27\.90/, "100 ml value price must be visible");
+assert.match(html, /\$39\.90/, "Two-unit launch bundle must be visible");
+assert.match(html, /\$54\.90/, "Three-unit launch bundle must be visible");
+assert.match(html, /وفّري \$3\.90/, "Two-unit savings must be transparent");
+assert.match(html, /وفّري \$10\.80/, "Three-unit savings must be transparent");
+assert.match(html, /لا يُجمع مع أي خصم آخر/, "Offer stacking terms must be explicit");
 assert.match(html, /https:\/\/wa\.me\/963997310856/, "WhatsApp order URL must be present");
 
 const ids = new Set([...html.matchAll(/\bid="([^"]+)"/g)].map((match) => match[1]));
