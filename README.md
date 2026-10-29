@@ -50,13 +50,13 @@ The launch-pricing presentation on `feat/rawaa-launch-pricing-offers` is a stage
 | Size | Display price | Strategic role |
 |---|---:|---|
 | 30 ml | $19.90 | Entry/price anchor: deliberately close to the 50 ml hero |
-| 50 ml | $21.90 | Hero SKU: strongest balance of price and perceived value |
-| 100 ml | $27.90 | Value ladder: lowest displayed price per ml |
+| 50 ml | $21.90 | Close-price comparison anchor that makes the 100 ml hero easier to evaluate |
+| 100 ml | $27.90 | Hero SKU: double the 50 ml quantity for only $6 more; lowest displayed price per ml |
 
 Launch bundles (50 ml only), proposed for 30 October–12 November 2026:
-- 2 × 50 ml: $39.90 (regular combined price $43.80; saving $3.90).
-- 3 × 50 ml: $54.90 (regular combined price $65.70; saving $10.80).
+- 2 × 100 ml: $49.90 (regular combined price $55.80; saving $5.90).
+- 3 × 100 ml: $69.90 (regular combined price $83.70; saving $13.80).
 
-Rules: bundle prices do not stack with any other discount; shipping is quoted separately and confirmed on WhatsApp; a WhatsApp message is an inquiry/order request, not an order confirmation. Do not advertise a countdown, stock limit, or scarcity claim unless it is real and operationally enforceable.
+Rules: bundle prices apply to 100 ml units only and do not stack with any other discount; shipping is quoted separately and confirmed on WhatsApp; a WhatsApp message is an inquiry/order request, not an order confirmation. Do not advertise a countdown, stock limit, or scarcity claim unless it is real and operationally enforceable.
 
 Before launch, the brand owner must validate per-SKU manufacturing/packaging cost, delivery cost by destination, payment fees, and return/cancellation exposure. Recalculate contribution margin for each single unit and bundle. The website is a static storefront and does not enforce stock, promo-code eligibility, offer expiry, or discount stacking in a backend; staff must apply these rules consistently when confirming orders. These prices and offer dates are a staged commercial proposal, not evidence of a published promotion.
