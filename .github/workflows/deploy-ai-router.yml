@@ -35,13 +35,39 @@ jobs:
       - name: Validate Worker syntax
         run: node --check worker.js
 
+      - name: Check required Cloudflare credentials
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          set -euo pipefail
+          test -n "$CLOUDFLARE_API_TOKEN" || { echo "::error::Missing GitHub secret CLOUDFLARE_API_TOKEN"; exit 1; }
+          test -n "$CLOUDFLARE_ACCOUNT_ID" || { echo "::error::Missing GitHub secret CLOUDFLARE_ACCOUNT_ID"; exit 1; }
+          echo "Cloudflare secrets are present. Presence does not prove token permissions."
+
+      - name: Verify Cloudflare API token
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        run: |
+          set -euo pipefail
+          status="$(curl --silent --show-error --output token-check.json --write-out '%{http_code}' \
+            https://api.cloudflare.com/client/v4/user/tokens/verify \
+            -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" \
+            -H "Content-Type: application/json")"
+          if [[ "$status" != "200" ]] || ! node -e "const d=require('./token-check.json'); process.exit(d.success ? 0 : 1)"; then
+            echo "::error::Cloudflare rejected the API token. Create or update a token in Cloudflare and replace the GitHub secret."
+            cat token-check.json
+            exit 1
+          fi
+          node -e "const d=require('./token-check.json'); console.log('Cloudflare token status:', d.result?.status || 'verified')"
+          rm -f token-check.json
+
       - name: Deploy Worker
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
         run: |
-          test -n "$CLOUDFLARE_API_TOKEN"
-          test -n "$CLOUDFLARE_ACCOUNT_ID"
+          set -euo pipefail
           wrangler deploy
 
       - name: Configure provider secrets on Worker
@@ -54,10 +80,15 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
+          configured=0
           for key in GEMINI_API_KEY OPENROUTER_API_KEY COHERE_API_KEY; do
             if [[ -n "${!key:-}" ]]; then
               printf '%s' "${!key}" | wrangler secret put "$key"
+              configured=$((configured + 1))
             else
               echo "$key is not configured in GitHub; skipping."
             fi
           done
+          if [[ "$configured" -eq 0 ]]; then
+            echo "::warning::No provider API keys were configured on the Worker. It may deploy, but provider requests will fail until secrets are added."
+          fi
