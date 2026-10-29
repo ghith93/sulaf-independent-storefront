@@ -22,7 +22,11 @@ assert.match(html, /\$49\.90/, "Two-unit 100 ml launch bundle must be visible");
 assert.match(html, /\$69\.90/, "Three-unit 100 ml launch bundle must be visible");
 assert.match(html, /وفّري \$5\.90/, "Two-unit savings must be transparent");
 assert.match(html, /وفّري \$13\.80/, "Three-unit savings must be transparent");
-assert.match(html, /لا يُجمع مع أي خصم آخر/, "Offer stacking terms must be explicit");
+assert.match(html, /لا يُجمع مع أي خصم آخر، بما في ذلك خصم شام كاش 10%/, "Offer stacking terms must be explicit");
+assert.match(html, /التوصيل مجاني إلى جميع المحافظات السورية/, "Free nationwide delivery must be disclosed");
+assert.match(html, /عينة هدية 30 مل من منتج ثانٍ/, "Free 30 ml sample with every order must be disclosed");
+assert.match(html, /class="size-option is-hero"[^>]*href="https:\/\/wa\.me\/[^"]*حجم%20100%20مل/s, "100 ml must be the only visually designated hero size");
+assert.doesNotMatch(html, /السعر المعتمد لعبوة 50 مل هو 12 دولارًا|حجم العبوة 50 مل/, "Outdated single-size FAQ content must not remain");
 assert.match(html, /https:\/\/wa\.me\/963997310856/, "WhatsApp order URL must be present");
 
 const ids = new Set([...html.matchAll(/\bid="([^"]+)"/g)].map((match) => match[1]));
