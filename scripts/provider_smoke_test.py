@@ -1,3 +1,4 @@
+# Provider smoke test: checks API connectivity without exposing secrets.
 #!/usr/bin/env python3
 """Low-cost provider smoke tests. Never print tokens or full provider responses."""
 import json
