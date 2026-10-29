@@ -50,3 +50,13 @@ Use the iPhone as the control surface. Let GitHub Actions and the existing Cloud
 - Worker rate limiting uses in-memory state and is best-effort; it is not a durable global quota counter.
 - The free provider order is availability-oriented, not a guarantee of best answer quality.
 - The current app is a chat interface, not yet a persistent autonomous software agent. Durable task queue, task state, and controlled PR generation are separate future capabilities and must be implemented with tests.
+
+## Issue-to-PR coding agent
+- Workflow: .github/workflows/ai-issue-agent.yml.
+- Create an issue with a clear, bounded task and apply the ai-task label. Only issues opened by repository owner/member/collaborator trigger from the label event.
+- The agent uses the existing Worker router, not a separate paid API. It receives only index.html, styles.css, and app.js source context.
+- The model must return JSON exact-string edit operations. The runner rejects invalid JSON, non-allowlisted files, non-unique matches, oversized operations, and empty changes.
+- The runner runs JavaScript syntax checks and node --test worker.test.js before creating a branch and pull request.
+- The agent never merges its own PR. Review the diff and CI results from a phone before merging.
+- To re-run a task, remove and reapply the ai-task label, or use Actions > AI issue-to-pull-request agent > Run workflow and provide an open issue number.
+- The first end-to-end test task is issue #1 and the generated pull request is PR #2. Its PR validation currently requires the repository's normal GitHub Actions approval gate; the agent's own pre-PR tests passed.
