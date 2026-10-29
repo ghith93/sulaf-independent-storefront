@@ -1,0 +1,52 @@
+# Sulaf operating playbook (iPhone-first, free-tier-first)
+
+## Operating objective
+Use the iPhone as the control surface. Let GitHub Actions and the existing Cloudflare Worker do repeatable work in the cloud. Avoid requiring a laptop, paid server, or always-on process.
+
+## Current system
+- Static Arabic interface: GitHub Pages (index.html, styles.css, app.js).
+- API router: Cloudflare Worker (worker.js, wrangler.toml).
+- Providers: OpenRouter, Gemini, Cloudflare Workers AI, Cohere.
+- Automated checks: .github/workflows/validate.yml, .github/workflows/deploy-ai-router.yml, and .github/workflows/smoke-test-ai-router.yml.
+- Regression tests: node --test worker.test.js; they use mocks and do not consume provider quotas.
+- Live smoke tests: run every six hours and after changes to the router/test workflow. They consume a small number of provider calls.
+
+## Safe operating loop
+1. Observe: inspect the latest workflow runs and /health; provider flags only indicate configuration, not working generation.
+2. Reproduce: use local mocked regression tests first; then run live smoke tests for provider behavior.
+3. Plan: make the smallest change that addresses an observed failure. Prefer maintained free-tier model endpoints and dependencies already present.
+4. Change: commit changes to a branch or a narrowly scoped commit; never print secrets or put keys in source, issue text, or logs.
+5. Validate: run node --check worker.js, node --test worker.test.js, node --check app.js, and the site validation workflow.
+6. Deploy: deploy only after syntax and regression tests pass. Live checks verify health, each provider, and automatic routing.
+7. Observe again: confirm the workflow conclusion and inspect the relevant logs. Do not call a deployment successful just because a commit exists.
+8. Record: update this playbook when routes, providers, test commands, or operating behavior changes.
+
+## Decision rules
+- If one provider fails but others pass, preserve service and investigate that provider separately.
+- If all providers fail, treat it as an incident; do not keep retrying in a tight loop.
+- Never trust a /health provider boolean as proof the model works.
+- Do not automatically merge model-generated code. A future coding agent should open a pull request, run tests, and require a review gate before production deployment.
+- Do not enable billing or install paid services as a workaround without explicit approval.
+- Keep logs free of prompts that may contain personal information, provider response bodies, API keys, and authorization headers.
+- Avoid dependency additions when built-in Node.js, GitHub Actions, or Worker APIs suffice.
+- Keep periodic live tests low-frequency; use mocked tests for frequent CI runs.
+
+## Free-tier and cost controls
+- Keep the existing four-provider fallback rather than adding a paid orchestrator.
+- Use GitHub Actions for scheduled work and Cloudflare Workers for requests; no always-on VM is required.
+- Use free model routes where available, but treat quotas, availability, and model identifiers as changeable.
+- A green workflow is evidence for that run only, not a permanent guarantee.
+- Recheck provider model deprecations and free-tier limits before changing model IDs or increasing schedule frequency.
+
+## iPhone-only operations
+1. Open the repository Actions page: https://github.com/ghith93/sulaf-independent-storefront/actions
+2. Open AI Router live smoke test to verify current real provider behavior.
+3. Open Validate static site to verify syntax and mocked regression tests.
+4. Open Deploy Sulaf AI Router to inspect the deployment result.
+5. If a workflow fails, inspect the failed step first; do not rotate tokens or rewrite secrets unless logs indicate a credential issue.
+6. Make changes through GitHub's web interface or a reviewed pull request. Keep each change small enough to revert from the iPhone.
+
+## Current known constraints
+- Worker rate limiting uses in-memory state and is best-effort; it is not a durable global quota counter.
+- The free provider order is availability-oriented, not a guarantee of best answer quality.
+- The current app is a chat interface, not yet a persistent autonomous software agent. Durable task queue, task state, and controlled PR generation are separate future capabilities and must be implemented with tests.
