@@ -15,15 +15,26 @@ assert.match(html, /application\/ld\+json/, "Structured product data is required
 assert.match(html, /href="favicon\.svg"/, "Favicon must be linked");
 assert.match(html, /سيروم رواء/, "Product copy is required");
 assert.match(html, /50\s*مل/, "Product size must be visible in Arabic");
-assert.match(html, /\$12/, "Approved price must be visible");
+assert.match(html, /\$19\.90/, "30 ml price must be visible");
+assert.match(html, /\$21\.90/, "50 ml comparison price must be visible");
+assert.match(html, /\$27\.90/, "100 ml hero price must be visible");
+assert.match(html, /\$49\.90/, "Two-unit 100 ml launch bundle must be visible");
+assert.match(html, /\$69\.90/, "Three-unit 100 ml launch bundle must be visible");
+assert.match(html, /وفّري \$5\.90/, "Two-unit savings must be transparent");
+assert.match(html, /وفّري \$13\.80/, "Three-unit savings must be transparent");
+assert.match(html, /لا يُجمع مع أي خصم آخر، بما في ذلك خصم شام كاش 10%/, "Offer stacking terms must be explicit");
+assert.match(html, /التوصيل مجاني إلى جميع المحافظات السورية/, "Free nationwide delivery must be disclosed");
+assert.match(html, /عينة هدية 30 مل من منتج ثانٍ/, "Free 30 ml sample with every order must be disclosed");
+assert.match(html, /class="size-option is-hero"[^>]*href="https:\/\/wa\.me\/[^"]*%20100%20%D9%85%D9%84/s, "100 ml must be the only visually designated hero size");
+assert.doesNotMatch(html, /السعر المعتمد لعبوة 50 مل هو 12 دولارًا|حجم العبوة 50 مل/, "Outdated single-size FAQ content must not remain");
 assert.match(html, /https:\/\/wa\.me\/963997310856/, "WhatsApp order URL must be present");
 
 const ids = new Set([...html.matchAll(/\bid="([^"]+)"/g)].map((match) => match[1]));
 for (const match of html.matchAll(/href="#([^"]+)"/g)) {
-  assert.ok(ids.has(match[1]), `Anchor target #${match[1]} must exist`);
+  assert.ok(ids.has(match[1]), "Anchor target #" + match[1] + " must exist");
 }
 for (const section of ["product", "story", "ritual", "faq"]) {
-  assert.ok(ids.has(section), `Missing ${section} section`);
+  assert.ok(ids.has(section), "Missing " + section + " section");
 }
 
 const images = [...html.matchAll(/<img\b[^>]*>/g)].map((match) => match[0]);
