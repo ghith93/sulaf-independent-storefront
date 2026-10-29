@@ -1,4 +1,4 @@
-const MAX_BODY_CHARS = 4000;
+const MAX_BODY_CHARS = 20_000;
 const WINDOW_MS = 60_000;
 const MAX_REQUESTS_PER_WINDOW = 12;
 const rateBuckets = new Map();
