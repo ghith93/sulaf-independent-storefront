@@ -1,0 +1,48 @@
+name: Automation watchdog
+
+on:
+  schedule:
+    - cron: "17,47 * * * *"
+  workflow_dispatch:
+
+permissions:
+  actions: read
+  issues: write
+
+concurrency:
+  group: automation-watchdog
+  cancel-in-progress: false
+
+jobs:
+  inspect-recent-runs:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Report failed automation runs without duplicating incidents
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPOSITORY: ${{ github.repository }}
+        run: |
+          set -euo pipefail
+          since="$(date -u -d '24 hours ago' +%Y-%m-%dT%H:%M:%SZ)"
+          workflows=("ai-issue-agent.yml" "validate.yml" "smoke-test-ai-router.yml" "deploy-ai-router.yml")
+          for workflow in "${workflows[@]}"; do
+            if ! gh api "repos/$REPOSITORY/actions/workflows/$workflow/runs?per_page=20" > "/tmp/runs-$workflow.json"; then
+              echo "::warning::Could not inspect workflow $workflow"
+              continue
+            fi
+            while IFS=$'\t' read -r run_id run_name conclusion created_at html_url; do
+              [[ -n "$run_id" ]] || continue
+              [[ "$conclusion" == "failure" ]] || continue
+              [[ "$created_at" > "$since" ]] || continue
+              title="Automation incident: $workflow run $run_id failed"
+              existing="$(gh issue list --repo "$REPOSITORY" --state all --search "\"$run_id\" in:title" --json number,title --jq '.[].number' | head -n 1 || true)"
+              if [[ -n "$existing" ]]; then
+                echo "Incident already tracked for run $run_id in issue #$existing"
+                continue
+              fi
+              body="$(printf 'The automation watchdog detected a failed workflow run.\n\n- Workflow file: `%s`\n- Run: %s\n- Conclusion: %s\n- Created (UTC): %s\n- Run details: %s\n\nNext steps: inspect the failed step and logs, identify the root cause, make the smallest safe fix, and rerun the relevant checks. Do not paste secrets or full provider responses into this issue. This incident was created automatically; it does not mean the failure has been repaired.' "$workflow" "$run_id" "$conclusion" "$created_at" "$html_url")"
+              gh issue create --repo "$REPOSITORY" --title "$title" --body "$body"
+            done < <(jq -r --arg since "$since" '.workflow_runs[]? | select(.created_at > $since) | [.id, .name, (.conclusion // ""), .created_at, .html_url] | @tsv' "/tmp/runs-$workflow.json")
+          done
+          echo "Watchdog inspection finished."
