@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#101713">
+  <meta name="description" content="Sulaf — واجهة عربية لمساعد ذكاء اصطناعي متعدد المزوّدات.">
+  <title>سُلاف | مساعد الذكاء الاصطناعي</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <main class="shell">
+    <header class="topbar">
+      <a class="brand" href="./" aria-label="سلاف"><span class="brand-mark">س</span><span><strong>سُلاف</strong><small>مساعد مستقل متعدد المزوّدات</small></span></a>
+      <span class="status"><i></i><span id="health-label">جارٍ فحص الاتصال</span></span>
+    </header>
+    <section class="intro">
+      <p class="eyebrow">SULAF AI · MULTI-PROVIDER</p>
+      <h1>فكّر. أنجز.<br><span>دون الارتباط بمزوّد واحد.</span></h1>
+      <p class="lede">واجهة عربية واحدة، مع تحويل تلقائي إلى مزوّد آخر عندما يتعذر إكمال الطلب.</p>
+    </section>
+    <section class="panel">
+      <div class="panel-head"><div><h2>المحادثة</h2><p>لا تضع كلمات مرور أو مفاتيح سرية داخل المحادثة.</p></div>
+        <label class="provider-label" for="provider">المزوّد</label>
+      </div>
+      <select id="provider" aria-label="اختر المزوّد">
+        <option value="auto">تلقائي — التحويل عند الفشل</option>
+        <option value="OpenRouter">OpenRouter</option>
+        <option value="Gemini">Gemini</option>
+        <option value="Cloudflare Workers AI">Cloudflare Workers AI</option>
+        <option value="Cohere">Cohere</option>
+      </select>
+      <div id="messages" class="messages" aria-live="polite"><div class="empty"><span class="spark">✳</span><strong>ما المهمة التي تريد إنجازها؟</strong><span>ابدأ بسؤال أو اطلب خطة أو مساعدة في العمل.</span></div></div>
+      <form id="chat-form">
+        <textarea id="prompt" rows="3" maxlength="4000" placeholder="اكتب طلبك هنا..." required></textarea>
+        <div class="composer-foot"><span id="hint">تُرسل الطلبات إلى المزوّد المختار عبر الخادم.</span><button id="send" type="submit">إرسال <span aria-hidden="true">↗</span></button></div>
+      </form>
+    </section>
+    <footer><span>سُلاف · بوابة تجريبية مفتوحة المصدر</span><span id="provider-note">حالة المزوّدين تُفحص من الخادم</span></footer>
+  </main>
+  <script src="app.js" defer></script>
+</body>
+</html>
