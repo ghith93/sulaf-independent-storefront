@@ -61,7 +61,7 @@ token = os.getenv("GEMINI_API_KEY", "").strip()
 if not token:
     record("Gemini", False, False, "secret GEMINI_API_KEY is not configured")
 else:
-    url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=" + token
+    url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent?key=" + token
     status, payload = request_json("Gemini", url, "unused", {"contents": [{"parts": [{"text": PROMPT}]}], "generationConfig": {"maxOutputTokens": 12}}, {"Authorization": ""})
     ok = status == 200 and bool(payload.get("candidates"))
     detail = f"HTTP {status}" if status else "network/TLS/timeout error"
@@ -71,7 +71,7 @@ else:
     record("Gemini", True, ok, detail)
 
 # OpenAI-compatible endpoints
-chat("Groq", "GROQ_API_KEY", "https://api.groq.com/openai/v1/chat/completions", "llama-3.3-70b-versatile")
+chat("Groq", "GROQ_API_KEY", "https://api.groq.com/openai/v1/chat/completions", "openai/gpt-oss-120b")
 chat("OpenRouter", "OPENROUTER_API_KEY", "https://openrouter.ai/api/v1/chat/completions", "openrouter/free",
      {"HTTP-Referer": "https://github.com/ghith93/sulaf-independent-storefront", "X-Title": "Sulaf Provider Smoke Test"})
 chat("Mistral", "MISTRAL_API_KEY", "https://api.mistral.ai/v1/chat/completions", "mistral-small-latest")
