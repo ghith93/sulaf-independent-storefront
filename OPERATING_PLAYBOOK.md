@@ -33,7 +33,10 @@ Use the iPhone as the control surface. Let GitHub Actions and the existing Cloud
 - Keep periodic live tests low-frequency; use mocked tests for frequent CI runs.
 
 ## Free-tier and cost controls
-- The watchdog reports failures; it does not autonomously repair or retry every failure. Incident issues require diagnosis before reruns, preventing uncontrolled loops and duplicate work.
+- The watchdog runs every 30 minutes, scans recent failures, deduplicates incidents by run ID, and includes failed job/step names plus workflow-specific diagnosis and repair guidance when the Actions API exposes them.
+- Repair loop: reproduce the first failure, identify root cause from logs, make the smallest reversible fix, run the relevant mocked regression checks, rerun the failed workflow once, and confirm the final conclusion. Record confirmed recurring causes and fixes here.
+- Automatic code edits are deliberately not triggered by watchdog incidents: the coding agent is limited to index.html, styles.css, and app.js and cannot safely repair workflow, permissions, provider-secret, or deployment failures. Use the AI issue agent only for a clearly scoped storefront-code fix; review its PR and never auto-merge.
+- The watchdog diagnoses and opens tickets; it does not claim a repair happened unless a later run verifies the fix. Avoid blind retries and loops.
 - Keep the existing four-provider fallback rather than adding a paid orchestrator.
 - Use GitHub Actions for scheduled work and Cloudflare Workers for requests; no always-on VM is required.
 - Use free model routes where available, but treat quotas, availability, and model identifiers as changeable.
