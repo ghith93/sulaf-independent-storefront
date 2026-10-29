@@ -45,7 +45,7 @@ The repository's current name remains `sulaf-independent-storefront`; renaming i
 
 ## RAWAA pricing and launch offer experiment
 
-The launch-pricing presentation on `feat/rawaa-launch-pricing-offers` is a staged proposal and is not deployed to the live site.
+The launch-pricing presentation on `feat/rawaa-launch-pricing-offers` is a staged proposal and is not deployed to the live site. The 100 ml SKU is the hero; the 50 ml price is intentionally close to make the larger format's incremental value immediately clear.
 
 | Size | Display price | Strategic role |
 |---|---:|---|
