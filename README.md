@@ -6,7 +6,7 @@ Arabic-first, right-to-left editorial storefront for RAWAA hair serum. This repo
 
 - Premium editorial layout with Arabic RTL navigation and responsive mobile menu.
 - Brand story, product detail, usage guidance, FAQ, and direct WhatsApp inquiry/order links.
-- Product details: hair serum, 50 ml, listed at $12.
+- Product sizes and approved launch prices: 30 ml $19.90, 50 ml $21.90, 100 ml $27.90.
 - SEO and social-sharing metadata, lazy-loaded supporting imagery, prioritized hero image, reduced-motion support, and automated static checks.
 - Static GitHub Pages deployment; no paid services or checkout backend required.
 
@@ -49,14 +49,14 @@ The launch-pricing presentation on `feat/rawaa-launch-pricing-offers` is a stage
 
 | Size | Display price | Strategic role |
 |---|---:|---|
-| 30 ml | $19.90 | Entry/price anchor: deliberately close to the 50 ml hero |
-| 50 ml | $21.90 | Close-price comparison anchor that makes the 100 ml hero easier to evaluate |
+| 30 ml | $19.90 | Entry/trial size |
+| 50 ml | $21.90 | Mid-size comparison option |
 | 100 ml | $27.90 | Hero SKU: double the 50 ml quantity for only $6 more; lowest displayed price per ml |
 
-Launch bundles (50 ml only), proposed for 30 October–12 November 2026:
+Launch bundles (100 ml only), proposed for 30 October–12 November 2026:
 - 2 × 100 ml: $49.90 (regular combined price $55.80; saving $5.90).
 - 3 × 100 ml: $69.90 (regular combined price $83.70; saving $13.80).
 
-Rules: bundle prices apply to 100 ml units only and do not stack with any other discount; shipping is quoted separately and confirmed on WhatsApp; a WhatsApp message is an inquiry/order request, not an order confirmation. Do not advertise a countdown, stock limit, or scarcity claim unless it is real and operationally enforceable.
+Rules: bundle prices apply to 100 ml units only and do not stack with the 10% Sham Cash discount or other discounts. Delivery is free across Syria. Every order, regardless of size, includes one free 30 ml sample of a second RAWAA product. A WhatsApp message is an inquiry/order request, not an order confirmation. Do not advertise a countdown, stock limit, or scarcity claim unless it is real and operationally enforceable.
 
-Before launch, the brand owner must validate per-SKU manufacturing/packaging cost, delivery cost by destination, payment fees, and return/cancellation exposure. Recalculate contribution margin for each single unit and bundle. The website is a static storefront and does not enforce stock, promo-code eligibility, offer expiry, or discount stacking in a backend; staff must apply these rules consistently when confirming orders. These prices and offer dates are a staged commercial proposal, not evidence of a published promotion.
+Current planning cost model: $4 manufacturing cost per main serum bottle, $1 for one 30 ml sample per order, and $4 delivery cost per order (absorbed by RAWAA). Indicative contribution before ads, payment fees, extra packing, returns, and operating costs: 30 ml order $10.90; 50 ml order $12.90; 100 ml order $18.90; 2 × 100 ml bundle $36.90; 3 × 100 ml bundle $52.90. These figures assume the $4 manufacturing cost applies to each main bottle and one sample is included per order. Validate payment fees and return/cancellation exposure before launch. The website is a static storefront and does not enforce stock, promo-code eligibility, offer expiry, or discount stacking in a backend; staff must apply these rules consistently when confirming orders. These prices and offer dates are a staged commercial proposal, not evidence of a published promotion.
