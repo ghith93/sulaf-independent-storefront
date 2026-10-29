@@ -44,7 +44,7 @@ jobs:
           if [[ "$EVENT_NAME" == "workflow_dispatch" ]]; then ISSUE_NUMBER="$INPUT_ISSUE_NUMBER"; else ISSUE_NUMBER="$EVENT_ISSUE_NUMBER"; fi
           [[ "$ISSUE_NUMBER" =~ ^[0-9]+$ ]] || { echo 'Invalid issue number'; exit 1; }
           gh api "repos/$REPOSITORY/issues/$ISSUE_NUMBER" > /tmp/task-issue.json
-          node -e 'const x=require("/tmp/task-issue.json"); if (x.pull_request || x.state !== "open") process.exit(1); if (x.title.length > 200 || (x.body || "").length > 2500) process.exit(2);'
+          node -e 'const x=require("/tmp/task-issue.json"); if (x.pull_request || x.state !== "open") { console.error("Task must be an open issue, not a pull request."); process.exit(1); } if (!["OWNER","MEMBER","COLLABORATOR"].includes(x.author_association)) { console.error("Issue author is not trusted for automated code changes."); process.exit(3); } if (!(x.labels || []).some(label => label.name === "ai-task")) { console.error("Issue must carry the ai-task label."); process.exit(4); } if (x.title.length > 200 || (x.body || "").length > 2500) { console.error("Issue title/body exceeds the configured limit."); process.exit(2); }'
           echo "number=$ISSUE_NUMBER" >> "$GITHUB_OUTPUT"
           echo "title=$(node -p 'require("/tmp/task-issue.json").title.replace(/[\r\n]/g," ").slice(0,160)')" >> "$GITHUB_OUTPUT"
 
