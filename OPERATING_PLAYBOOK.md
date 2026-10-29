@@ -8,6 +8,7 @@ Use the iPhone as the control surface. Let GitHub Actions and the existing Cloud
 - API router: Cloudflare Worker (worker.js, wrangler.toml).
 - Providers: OpenRouter, Gemini, Cloudflare Workers AI, Cohere.
 - Automated checks: .github/workflows/validate.yml, .github/workflows/deploy-ai-router.yml, and .github/workflows/smoke-test-ai-router.yml.
+- Automation watchdog: .github/workflows/automation-watchdog.yml checks recent failures in the agent, validation, live smoke-test, and deploy workflows every 30 minutes and creates a deduplicated incident issue.
 - Regression tests: node --test worker.test.js; they use mocks and do not consume provider quotas.
 - Live smoke tests: run every six hours and after changes to the router/test workflow. They consume a small number of provider calls.
 
@@ -32,6 +33,7 @@ Use the iPhone as the control surface. Let GitHub Actions and the existing Cloud
 - Keep periodic live tests low-frequency; use mocked tests for frequent CI runs.
 
 ## Free-tier and cost controls
+- The watchdog reports failures; it does not autonomously repair or retry every failure. Incident issues require diagnosis before reruns, preventing uncontrolled loops and duplicate work.
 - Keep the existing four-provider fallback rather than adding a paid orchestrator.
 - Use GitHub Actions for scheduled work and Cloudflare Workers for requests; no always-on VM is required.
 - Use free model routes where available, but treat quotas, availability, and model identifiers as changeable.
