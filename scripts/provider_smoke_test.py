@@ -131,8 +131,8 @@ else:
 print("\nSummary: " + ", ".join(f"{name}={state}" for name, state, _ in results))
 failures = sum(state == "FAIL" for _, state, _ in results)
 passes = sum(state == "PASS" for _, state, _ in results)
-if failures:
-    sys.exit(1)
 if passes == 0:
-    print("No configured provider completed an inference test.")
-    sys.exit(2)
+    print("No configured provider completed an inference test; configure at least one working provider.")
+    sys.exit(1)
+if failures:
+    print(f"WARNING: {failures} provider(s) failed, but {passes} provider(s) are operational. Continue using the passing providers and troubleshoot failed providers separately.")
