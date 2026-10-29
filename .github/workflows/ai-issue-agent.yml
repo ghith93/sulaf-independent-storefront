@@ -83,7 +83,7 @@ jobs:
           const fs = require('node:fs');
           const data = JSON.parse(fs.readFileSync('/tmp/agent-response.json', 'utf8'));
           if (!data.ok || typeof data.content !== 'string') throw new Error('AI router did not return patch content');
-          let raw = data.content.trim().replace(/^\`\`\`(?:json)?\\s*\\n/i, '').replace(/\\n\`\`\`\\s*$/, '');
+          let raw = data.content.trim().replace(/^```(?:json)?\s*\n/i, '').replace(/\n```\s*$/, '');
           const parsed = JSON.parse(raw);
           if (!Array.isArray(parsed.edits) || parsed.edits.length < 1 || parsed.edits.length > 8) throw new Error('Agent did not return a bounded non-empty edits array');
           const allowed = new Set(['index.html', 'styles.css', 'app.js']);
