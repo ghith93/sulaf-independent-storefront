@@ -1,43 +1,44 @@
 # RAWAA — Independent Storefront
 
-A lightweight, Arabic-first, right-to-left storefront for the RAWAA hair-care brand. This repository is now dedicated to the RAWAA storefront; the previous Sulaf application files have been removed from the current `main` tree.
+Arabic-first, right-to-left editorial storefront for RAWAA hair serum. This repository is the independent preview and deployment project; the original `ghith93/Raawaa-store` repository is kept separate and must not be modified by this workflow.
 
-## Current scope
+## Current experience
 
-- Responsive Arabic RTL brand and product landing page.
-- Quiet-luxury editorial styling and CSS-drawn concept bottle artwork.
-- RAWAA hair serum, 50 ml, listed at $12.
-- Direct WhatsApp order link; no checkout backend or payment processing.
-- SEO metadata, mobile navigation, reduced-motion support, and static checks.
+- Premium editorial layout with Arabic RTL navigation and responsive mobile menu.
+- Brand story, product detail, usage guidance, FAQ, and direct WhatsApp inquiry/order links.
+- Product details: hair serum, 50 ml, listed at $12.
+- SEO and social-sharing metadata, lazy-loaded supporting imagery, prioritized hero image, reduced-motion support, and automated static checks.
+- Static GitHub Pages deployment; no paid services or checkout backend required.
 
-## Preview and checks
+## Preview
 
-Open `index.html` in a browser or serve this directory with any static HTTP server. No package installation or paid service is required for a local preview.
+https://ghith93.github.io/sulaf-independent-storefront/
 
-Run the static checks with:
+## Local checks
+
+Requires Node.js; no dependency installation is needed.
 
 ```sh
 node scripts/check-storefront.mjs
 ```
 
-The GitHub Actions workflow runs the static checks on pushes to `main` and pull requests targeting `main`.
+GitHub Actions runs checks and deploys the static site from `main`.
 
-## Before public launch
+## Launch checklist
 
-- Replace the CSS-drawn bottle with approved RAWAA product photography and the official logo.
-- Confirm the WhatsApp number, product claims, price, shipping policy, and usage instructions.
-- Verify the order link in a real mobile browser.
-- Configure hosting for this repository independently. Do not connect deployment to `ghith93/Raawaa-store` or change that repository.
+- Replace editorial reference photos with approved RAWAA campaign/product photography and official logo assets.
+- Verify the WhatsApp destination on a real phone.
+- Confirm formula/ingredient details, directions, claims, price, delivery coverage, shipping fees, returns, and privacy wording with the brand owner before publishing them.
+- This static site sends orders to WhatsApp; it does not process payments or store orders in a database.
+- The image assets currently load from Unsplash; self-host approved optimized images for more predictable performance and brand consistency.
 
-## Separation from the existing RAWAA project
+## Open-source project references
 
-The existing `ghith93/Raawaa-store` repository and its deployed website have not been modified. This storefront is maintained in this separate repository. The repository's current GitHub name remains `sulaf-independent-storefront` because repository renaming is not available through the connected GitHub actions; change the repository name in GitHub settings if desired.
+These repositories were reviewed as architectural/design references, not copied into this lightweight static implementation:
 
-## Open-source references
+- [ScrewFast](https://github.com/mearashadowfax/ScrewFast) — MIT-licensed Astro template.
+- [Medusa Next.js Commerce](https://github.com/medusajs/nextjs-starter-medusa) — potential future option for a full commerce backend.
+- [Saleor Storefront](https://github.com/saleor/storefront) — commerce architecture reference; check current license before reuse.
+- [Spree Storefront](https://github.com/spree/storefront) — commerce architecture reference.
 
-- [ScrewFast](https://github.com/mearashadowfax/ScrewFast) — MIT-licensed Astro template reviewed for quality patterns.
-- [Medusa Next.js Commerce](https://github.com/medusajs/nextjs-starter-medusa) — a possible future option if full cart and checkout functionality is required.
-- [Saleor Storefront](https://github.com/saleor/storefront) — a future commerce architecture reference; verify its current license before reuse.
-- [Spree Storefront](https://github.com/spree/storefront) — MIT-licensed storefront reference for future checkout needs.
-
-No source files from these projects have been copied into this storefront.
+The repository's current name remains `sulaf-independent-storefront`; renaming it is a separate GitHub repository setting. The original `Raawaa-store` has not been modified.
