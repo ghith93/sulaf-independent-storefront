@@ -1,0 +1,48 @@
+name: AI Router live smoke test
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/smoke-test-ai-router.yml"
+  workflow_dispatch:
+  schedule:
+    - cron: "17 */6 * * *"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ai-router-smoke-test
+  cancel-in-progress: false
+
+jobs:
+  live-chat:
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    steps:
+      - name: Verify health endpoint
+        run: |
+          set -euo pipefail
+          curl --fail --silent --show-error --max-time 15 \
+            "https://sulaf-ai-router.ghith-shikhkhaled.workers.dev/health" \
+            -o health.json
+          cat health.json
+          jq -e '.ok == true and (.providers | any(. == true))' health.json >/dev/null
+
+      - name: Verify real AI generation with automatic failover
+        env:
+          API_URL: https://sulaf-ai-router.ghith-shikhkhaled.workers.dev/chat
+        run: |
+          set -euo pipefail
+          payload='{"provider":"auto","messages":[{"role":"user","content":"Reply with exactly: SULAF_OK"}]}'
+          status="$(curl --silent --show-error --max-time 75 \
+            -H "Origin: https://ghith93.github.io" \
+            -H "Content-Type: application/json" \
+            -o response.json -w "%{http_code}" \
+            -X POST "$API_URL" --data "$payload" || true)"
+          echo "HTTP status: $status"
+          jq '{ok, provider, fallback_used, error, providers}' response.json || cat response.json
+          test "$status" = "200"
+          jq -e '.ok == true and (.content | type == "string" and length > 0) and (.provider | type == "string" and length > 0)' response.json >/dev/null
+          echo "PASS: live AI generation returned content."
