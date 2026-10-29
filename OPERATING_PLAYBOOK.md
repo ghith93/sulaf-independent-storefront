@@ -51,6 +51,15 @@ Use the iPhone as the control surface. Let GitHub Actions and the existing Cloud
 - The free provider order is availability-oriented, not a guarantee of best answer quality.
 - The current app is a chat interface, not yet a persistent autonomous software agent. Durable task queue, task state, and controlled PR generation are separate future capabilities and must be implemented with tests.
 
+## ChatGPT-first operating loop
+- The user can submit a task directly in the ChatGPT conversation; they do not need to open GitHub or create an issue manually.
+- The assistant translates each actionable request into a bounded GitHub Issue with measurable acceptance criteria, applies the `ai-task` label, and checks the resulting Actions run.
+- If the agent opens a PR, inspect the diff, test results, and deployment impact before recommending merge. Do not merge or deploy automatically unless the user explicitly requests that action for the specific change.
+- If the agent fails, inspect logs, repair the workflow or simplify the task, and retry only after the cause is understood.
+- If the task is outside the agent's three-file allowlist, use direct repository tools for documentation/workflow changes only when safe, or split the work into a separate reviewed change. Never silently claim the agent can modify excluded files.
+- Report each task with: issue link, workflow result, PR link if created, test evidence, unresolved risks, and next concrete action.
+- User-facing commands may be natural Arabic: `نفذ: ...`, `تابع`, `افحص الحالة`, `راجع PR رقم ...`, and `توقف`.
+
 ## Issue-to-PR coding agent
 - Workflow: .github/workflows/ai-issue-agent.yml.
 - Create an issue with a clear, bounded task and apply the ai-task label. Only issues opened by repository owner/member/collaborator trigger from the label event.
