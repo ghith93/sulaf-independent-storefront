@@ -23,7 +23,21 @@ def request_json(name, url, token, body=None, headers=None, method=None):
             payload = json.loads(response.read().decode("utf-8"))
             return response.status, payload
     except urllib.error.HTTPError as exc:
-        # Do not print response bodies: providers can echo sensitive request metadata.
+        # Print only short provider error details, never request headers or tokens.
+        try:
+            payload = json.loads(exc.read().decode("utf-8"))
+            err = payload.get("error", {}) if isinstance(payload, dict) else {}
+            if isinstance(err, dict):
+                safe = {}
+                if isinstance(err.get("code"), (str, int)):
+                    safe["code"] = str(err["code"])[:80]
+                if isinstance(err.get("type"), str):
+                    safe["type"] = err["type"][:80]
+                if isinstance(err.get("message"), str):
+                    safe["message"] = err["message"][:180]
+                return exc.code, {"error": safe}
+        except Exception:
+            pass
         return exc.code, {}
     except Exception:
         return 0, {}
@@ -49,7 +63,14 @@ def chat(name, env_name, url, model, extra_headers=None, body_extra=None):
     if ok:
         detail = f"HTTP {status}; inference response received"
     elif status in (401, 403):
+        err = payload.get("error", {}) if isinstance(payload, dict) else {}
+        code = err.get("code") if isinstance(err, dict) else None
+        msg = err.get("message") if isinstance(err, dict) else None
         detail += "; check key and permissions"
+        if code:
+            detail += f"; provider_code={str(code)[:80]}"
+        if msg:
+            detail += f"; provider_message={str(msg)[:180]}"
     elif status == 429:
         detail += "; rate limit/quota reached"
     elif status in (400, 404, 422):
