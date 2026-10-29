@@ -144,3 +144,18 @@ jobs:
           git push origin "$branch"
           gh pr create --repo "$REPOSITORY" --base main --head "$branch" --title "AI implementation: ${TASK_TITLE}" --body "Automated implementation for #${ISSUE_NUMBER}.\n\n- Generated through the existing Sulaf AI router.\n- Changes restricted to index.html, styles.css, and app.js.\n- JavaScript syntax and Worker regression tests passed before opening this PR.\n- Review the diff and verify the deployed preview before merging.\n\nThis PR was not merged automatically."
           gh issue comment "$ISSUE_NUMBER" --repo "$REPOSITORY" --body "The automated agent opened a pull request for this task. Review it here: $(gh pr list --repo "$REPOSITORY" --head "$branch" --json url --jq '.[0].url'). The agent did not merge it."
+
+      - name: Report failure back to the task issue
+        if: failure()
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          EVENT_NAME: ${{ github.event_name }}
+          EVENT_ISSUE_NUMBER: ${{ github.event.issue.number }}
+          INPUT_ISSUE_NUMBER: ${{ inputs.issue_number }}
+          REPOSITORY: ${{ github.repository }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          set -euo pipefail
+          if [[ "$EVENT_NAME" == "workflow_dispatch" ]]; then ISSUE_NUMBER="$INPUT_ISSUE_NUMBER"; else ISSUE_NUMBER="$EVENT_ISSUE_NUMBER"; fi
+          [[ "$ISSUE_NUMBER" =~ ^[0-9]+$ ]] || { echo "No valid issue number; failure is visible in Actions: $RUN_URL"; exit 0; }
+          gh issue comment "$ISSUE_NUMBER" --repo "$REPOSITORY" --body "The automated agent could not complete this task. No PR was created by this run. Inspect the failed step and logs here: $RUN_URL. This comment contains no provider output or secrets."
