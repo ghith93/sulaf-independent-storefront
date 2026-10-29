@@ -63,7 +63,7 @@ jobs:
           const messages = [];
           for (const file of files) {
             const content = fs.readFileSync(file, 'utf8');
-            if (content.length > 3900) throw new Error('Context file exceeds safe router message limit: ' + file);
+            if (content.length > 18_000) throw new Error('Context file exceeds safe router message limit: ' + file);
             messages.push({ role: 'user', content: 'SOURCE FILE: ' + file + '\\n--- BEGIN FILE ---\\n' + content + '\\n--- END FILE ---' });
           }
           messages.push({ role: 'user', content: [
