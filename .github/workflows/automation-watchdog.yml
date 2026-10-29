@@ -41,7 +41,21 @@ jobs:
                 echo "Incident already tracked for run $run_id in issue #$existing"
                 continue
               fi
-              body="$(printf 'The automation watchdog detected a failed workflow run.\n\n- Workflow file: `%s`\n- Run: %s\n- Conclusion: %s\n- Created (UTC): %s\n- Run details: %s\n\nNext steps: inspect the failed step and logs, identify the root cause, make the smallest safe fix, and rerun the relevant checks. Do not paste secrets or full provider responses into this issue. This incident was created automatically; it does not mean the failure has been repaired.' "$workflow" "$run_id" "$conclusion" "$created_at" "$html_url")"
+              if ! gh api "repos/$REPOSITORY/actions/runs/$run_id/jobs?per_page=100" > "/tmp/jobs-$run_id.json"; then
+                failed_steps="Could not retrieve job details automatically."
+              else
+                failed_steps="$(jq -r '[.jobs[]? | select(.conclusion == "failure") | "- Job: " + .name + "\\n" + ([.steps[]? | select(.conclusion == "failure") | "  - Failed step: " + .name] | join("\\n"))] | join("\\n")' "/tmp/jobs-$run_id.json")"
+                [[ -n "$failed_steps" ]] || failed_steps="No failed step name was exposed by the Actions API; inspect the run logs."
+              fi
+              case "$workflow" in
+                validate.yml) repair_hint="Reproduce with node --check app.js and node --test worker.test.js; fix the first syntax error or failing assertion, then rerun validation." ;;
+                ai-issue-agent.yml) repair_hint="Inspect the failed agent step, router HTTP status, JSON edit validation, exact-match failures, and test output. Simplify tasks outside the three-file allowlist." ;;
+                smoke-test-ai-router.yml) repair_hint="Distinguish provider quota/outage/model errors from router regressions. Run mocked tests first; avoid repeated provider calls and never expose response bodies or secrets." ;;
+                deploy-ai-router.yml) repair_hint="Inspect tests and deployment authentication/configuration. Run tests before deployment; do not rotate or print secrets without evidence of a credential issue." ;;
+                automation-watchdog.yml) repair_hint="The watchdog may be unable to report its own failure. Inspect Actions logs manually, check workflow permissions, then run workflow_dispatch after a safe fix." ;;
+                *) repair_hint="Inspect the first failed step, identify the root cause, make the smallest reversible fix, rerun relevant checks, and verify the final workflow conclusion." ;;
+              esac
+              body="$(printf 'The automation watchdog detected a failed workflow run.\n\n- Workflow file: %s\n- Run: %s\n- Conclusion: %s\n- Created (UTC): %s\n- Run details: %s\n\n## Failed job/step details\n%s\n\n## Suggested diagnosis and repair\n%s\n\n## Resolution checklist\n1. Confirm the first failing step and root cause from the linked logs.\n2. Make the smallest safe, reversible change; do not expose secrets or full provider responses.\n3. Run relevant regression checks before redeploying.\n4. Rerun the workflow once and verify the final conclusion.\n5. Record confirmed recurring causes and fixes in the operating playbook.\n\nThis is a diagnosis ticket, not proof that the failure has been repaired. The watchdog does not automatically change production code or blindly retry workflows.' "$workflow" "$run_id" "$conclusion" "$created_at" "$html_url" "$failed_steps" "$repair_hint")"
               gh issue create --repo "$REPOSITORY" --title "$title" --body "$body"
             done < <(jq -r --arg since "$since" '.workflow_runs[]? | select(.created_at > $since) | [.id, .name, (.conclusion // ""), .created_at, .html_url] | @tsv' "/tmp/runs-$workflow.json")
           done
