@@ -35,6 +35,9 @@ jobs:
       - name: Validate Worker syntax
         run: node --check worker.js
 
+      - name: Run Worker regression tests
+        run: node --test worker.test.js
+
       - name: Check required Cloudflare credentials
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
