@@ -27,10 +27,10 @@ assert.match(html, /https:\/\/wa\.me\/963997310856/, "WhatsApp order URL must be
 
 const ids = new Set([...html.matchAll(/\bid="([^"]+)"/g)].map((match) => match[1]));
 for (const match of html.matchAll(/href="#([^"]+)"/g)) {
-  assert.ok(ids.has(match[1]), \`Anchor target #\${match[1]} must exist\`);
+  assert.ok(ids.has(match[1]), "Anchor target #" + match[1] + " must exist");
 }
 for (const section of ["product", "story", "ritual", "faq"]) {
-  assert.ok(ids.has(section), \`Missing \${section} section\`);
+  assert.ok(ids.has(section), "Missing " + section + " section");
 }
 
 const images = [...html.matchAll(/<img\b[^>]*>/g)].map((match) => match[0]);
