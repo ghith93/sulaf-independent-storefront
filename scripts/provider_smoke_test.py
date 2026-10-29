@@ -92,7 +92,7 @@ else:
     record("Gemini", True, ok, detail)
 
 # OpenAI-compatible endpoints
-chat("Groq", "GROQ_API_KEY", "https://api.groq.com/openai/v1/chat/completions", "openai/gpt-oss-20b")
+chat("Groq", "GROQ_API_KEY", "https://api.groq.com/openai/v1/chat/completions", "llama-3.1-8b-instant")
 chat("OpenRouter", "OPENROUTER_API_KEY", "https://openrouter.ai/api/v1/chat/completions", "openrouter/free",
      {"HTTP-Referer": "https://github.com/ghith93/sulaf-independent-storefront", "X-Title": "Sulaf Provider Smoke Test"})
 chat("Mistral", "MISTRAL_API_KEY", "https://api.mistral.ai/v1/chat/completions", "mistral-small-latest")
