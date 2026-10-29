@@ -1,4 +1,4 @@
-const API_BASE = "https://sulaf-ai-router.YOUR_SUBDOMAIN.workers.dev";
+const API_BASE = "https://sulaf-ai-router.ghith-shikhkhaled.workers.dev";
 const form = document.querySelector("#chat-form");
 const promptInput = document.querySelector("#prompt");
 const sendButton = document.querySelector("#send");
