@@ -1,0 +1,23 @@
+name: Android runner smoke test
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  runner-smoke:
+    name: Verify connected self-hosted runner
+    runs-on: self-hosted
+    timeout-minutes: 3
+    steps:
+      - name: Report runner environment
+        shell: bash
+        run: |
+          echo "Runner smoke test started."
+          echo "Runner OS: ${RUNNER_OS:-unknown}"
+          echo "Runner architecture: ${RUNNER_ARCH:-unknown}"
+          echo "Workspace is available."
+          pwd
+          echo "Runner smoke test passed."
