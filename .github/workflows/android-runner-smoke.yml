@@ -9,6 +9,10 @@ on:
 permissions:
   contents: read
 
+concurrency:
+  group: android-runner-smoke
+  cancel-in-progress: true
+
 jobs:
   runner-smoke:
     name: Verify connected self-hosted runner
@@ -18,9 +22,26 @@ jobs:
       - name: Report runner environment
         shell: bash
         run: |
-          echo "Runner smoke test started."
-          echo "Runner OS: ${RUNNER_OS:-unknown}"
-          echo "Runner architecture: ${RUNNER_ARCH:-unknown}"
-          echo "Workspace is available."
-          pwd
-          echo "Runner smoke test passed."
+          set -eu
+          echo "RUNNER_SMOKE_STARTED"
+          echo "RUNNER_OS=${RUNNER_OS:-unknown}"
+          echo "RUNNER_ARCH=${RUNNER_ARCH:-unknown}"
+          echo "RUNNER_NAME=${RUNNER_NAME:-unknown}"
+          echo "RUNNER_TEMP=${RUNNER_TEMP:-unknown}"
+          echo "PWD=$(pwd)"
+          echo "KERNEL=$(uname -s 2>/dev/null || echo unknown)"
+          echo "MACHINE=$(uname -m 2>/dev/null || echo unknown)"
+          if command -v getprop >/dev/null 2>&1; then
+            echo "ANDROID_BUILD=$(getprop ro.build.version.release 2>/dev/null || echo available)"
+            echo "ANDROID_SDK=$(getprop ro.build.version.sdk 2>/dev/null || echo unknown)"
+          else
+            echo "ANDROID_GETPROP=unavailable"
+          fi
+          for tool in git node npm python3 bash; do
+            if command -v "$tool" >/dev/null 2>&1; then
+              echo "TOOL_$tool=$(command -v "$tool")"
+            else
+              echo "TOOL_$tool=missing"
+            fi
+          done
+          echo "RUNNER_SMOKE_PASSED"
