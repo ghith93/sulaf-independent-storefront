@@ -2,6 +2,9 @@ name: Android runner smoke test
 
 on:
   workflow_dispatch:
+  push:
+    branches:
+      - agent/autonomous-system-bootstrap
 
 permissions:
   contents: read
